@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary - Vinho Escuro */
+  --color-primary-50: #faf5f7;
+  --color-primary-100: #f5e6ec;
+  --color-primary-200: #ead0d9;
+  --color-primary-300: #dab0bf;
+  --color-primary-400: #c4869d;
+  --color-primary-500: #a85f7a;
+  --color-primary-600: #8b3a57;
+  --color-primary-700: #7a2b45;
+  --color-primary-800: #5c1f34;
+  --color-primary-900: #4a1929;
+  --color-primary-950: #2d0f19;
+
+  /* Neutral - Bege Claro Nude */
+  --color-neutral-50: #fdfcfb;
+  --color-neutral-100: #f9f6f2;
+  --color-neutral-200: #f5e6d3;
+  --color-neutral-300: #e8d5c4;
+  --color-neutral-400: #d4c4b0;
+  --color-neutral-500: #b8a899;
+  --color-neutral-600: #9a8a7a;
+  --color-neutral-700: #7d6f62;
+  --color-neutral-800: #635750;
+  --color-neutral-900: #4a4039;
+  --color-neutral-950: #2d2620;
+
+  --color-background: var(--color-neutral-50);
+  --color-foreground: var(--color-neutral-950);
+
+  --color-card: var(--color-neutral-100);
+  --color-card-foreground: var(--color-neutral-950);
+
+  --color-popover: var(--color-neutral-50);
+  --color-popover-foreground: var(--color-neutral-950);
+
+  --color-muted: var(--color-neutral-200);
+  --color-muted-foreground: var(--color-neutral-700);
+
+  --color-accent: var(--color-primary-100);
+  --color-accent-foreground: var(--color-primary-900);
+
+  --color-border: var(--color-neutral-300);
+  --color-input: var(--color-neutral-300);
+  --color-ring: var(--color-primary-600);
+
+  --color-destructive-500: #ef4444;
+  --color-destructive-foreground: #fef2f2;
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 2.5rem;
+    letter-spacing: -0.025em;
+  }
+
+  h2 {
+    font-size: 1.875rem;
+    font-weight: 600;
+    line-height: 2.25rem;
+    letter-spacing: -0.025em;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 2rem;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.75rem;
+  }
+
+  h5 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.75rem;
+  }
+
+  h6 {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5rem;
+  }
+
+  small {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+  }
+}
