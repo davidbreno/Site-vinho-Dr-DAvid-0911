@@ -6,14 +6,16 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 
+import type { Patient } from '../types/patient';
+
 interface PatientsProps {
-  onViewPatientRecord: (patient: any) => void;
+  onViewPatientRecord: (patient: Patient) => void;
 }
 
 export function Patients({ onViewPatientRecord }: PatientsProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const patients = [
+  const patients: Patient[] = [
     {
       id: 1,
       name: "Maria Santos",

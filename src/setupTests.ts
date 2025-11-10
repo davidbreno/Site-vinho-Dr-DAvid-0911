@@ -1,11 +1,6 @@
 import '@testing-library/jest-dom';
+// Use a proper ResizeObserver polyfill for tests so components relying on
+// ResizeObserver (e.g. recharts ResponsiveContainer) behave more realistically.
+import { ResizeObserver as JuggleResizeObserver } from '@juggle/resize-observer';
 
-// Simple ResizeObserver polyfill for test environment (used by recharts ResponsiveContainer)
-// Vitest uses jsdom which doesn't implement ResizeObserver by default.
-class ResizeObserver {
-	observe() {}
-	unobserve() {}
-	disconnect() {}
-}
-
-(global as any).ResizeObserver = ResizeObserver;
+(global as any).ResizeObserver = JuggleResizeObserver;

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { Patient } from './types/patient';
 import { Sidebar } from "./components/Sidebar";
 import { Dashboard } from "./components/Dashboard";
 import { Patients } from "./components/Patients";
@@ -13,10 +14,10 @@ import { PatientRecordPage } from "./components/PatientRecordPage";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedPatient, setSelectedPatient] = useState<any>(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [viewingPatientRecord, setViewingPatientRecord] = useState(false);
 
-  const handleViewPatientRecord = (patient: any) => {
+  const handleViewPatientRecord = (patient: Patient) => {
     setSelectedPatient(patient);
     setViewingPatientRecord(true);
   };

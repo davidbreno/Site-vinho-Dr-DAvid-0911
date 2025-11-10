@@ -10,15 +10,7 @@ import { Separator } from "./ui/separator";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
-interface Patient {
-  id: number;
-  name: string;
-  age: number;
-  phone: string;
-  email: string;
-  lastVisit: string;
-  nextVisit: string | null;
-}
+import type { Patient } from '../types/patient';
 
 interface PatientRecordPageProps {
   patient: Patient;
