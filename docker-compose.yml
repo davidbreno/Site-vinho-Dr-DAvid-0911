@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  dental-platform:
+    build: .
+    container_name: dental-platform-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PUPPETEER_SKIP_DOWNLOAD=true
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    volumes:
+      - ./legacy-backend/public:/app/legacy-backend/public
+      - ./legacy-backend/db:/app/legacy-backend/db
+      - ./legacy-backend/templates:/app/legacy-backend/templates
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
