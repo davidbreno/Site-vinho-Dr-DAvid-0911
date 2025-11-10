@@ -6,185 +6,159 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      color: #333;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2c3e50;
+      background: #fff;
+      padding: 50px 60px;
       line-height: 1.6;
-      padding: 40px;
-      background: white;
     }
+    .page { max-width: 900px; margin: 0 auto; }
     .header {
-      border-bottom: 3px solid #003366;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      text-align: center;
-    }
-    .clinic-name {
-      color: #003366;
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-    .clinic-details {
-      font-size: 12px;
-      color: #666;
-    }
-    .patient-section {
-      margin-bottom: 25px;
-      padding: 15px;
-      background: #f9f9f9;
-      border-left: 4px solid #003366;
-    }
-    .patient-row {
       display: flex;
-      margin-bottom: 8px;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 60px;
+      padding-bottom: 30px;
+      border-bottom: 3px solid #8b5a8c;
     }
-    .label {
-      font-weight: bold;
-      width: 120px;
-      color: #003366;
-    }
-    .value {
-      flex: 1;
-    }
-    h2 {
-      color: #003366;
-      font-size: 16px;
-      border-bottom: 2px solid #003366;
-      padding-bottom: 10px;
-      margin-top: 30px;
-      margin-bottom: 20px;
-    }
-    .question-item {
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eee;
-    }
-    .question-text {
-      font-weight: bold;
-      color: #003366;
-      margin-bottom: 8px;
-    }
-    .checkbox {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2px solid #003366;
+    .logo { width: 80px; height: 80px; margin-right: 30px; object-fit: contain; }
+    .header-text h1 { font-size: 28px; color: #8b5a8c; font-weight: bold; margin-bottom: 5px; }
+    .header-text p { font-size: 13px; color: #666; }
+    h2 { color: #8b5a8c; font-size: 18px; border-bottom: 2px solid #8b5a8c; padding-bottom: 12px; margin: 35px 0 20px; }
+    .patient-section {
+      background: linear-gradient(135deg, #f5f0f7 0%, #faf8fc 100%);
+      padding: 25px 30px;
+      border-left: 5px solid #8b5a8c;
+      margin-bottom: 30px;
       border-radius: 3px;
-      margin-right: 10px;
-      vertical-align: middle;
     }
-    .checkbox.checked::after {
-      content: '✓';
-      display: block;
-      text-align: center;
-      line-height: 14px;
-      font-weight: bold;
-      color: #003366;
+    .patient-row { display: flex; margin-bottom: 12px; font-size: 14px; }
+    .label { font-weight: bold; width: 140px; color: #8b5a8c; }
+    .value { flex: 1; color: #2c3e50; }
+    .questions-list { margin-bottom: 30px; }
+    .question-item {
+      margin-bottom: 18px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #f0f0f0;
     }
+    .question-text { font-weight: 500; color: #2c3e50; margin-bottom: 8px; display: flex; align-items: flex-start; }
+    .checkbox {
+      display: inline-flex;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #8b5a8c;
+      border-radius: 3px;
+      margin-right: 12px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .checkbox.checked { background: #8b5a8c; color: white; }
+    .checkbox.checked::after { content: '✓'; font-weight: bold; }
+    .question-label { flex: 1; }
     .notes {
       background: #f5f5f5;
-      padding: 10px;
+      padding: 12px 15px;
       border-left: 3px solid #ddd;
       font-size: 13px;
-      margin-top: 8px;
+      margin-top: 10px;
+      margin-left: 32px;
       font-style: italic;
       color: #666;
+      border-radius: 2px;
     }
-    .medication-section {
-      background: #f9f9f9;
-      padding: 15px;
-      border-left: 4px solid #003366;
-      margin-bottom: 15px;
+    .meds-section {
+      background: linear-gradient(135deg, #f5f0f7 0%, #faf8fc 100%);
+      padding: 20px 25px;
+      border-left: 5px solid #8b5a8c;
+      margin-bottom: 20px;
+      border-radius: 3px;
     }
-    .medication-item {
-      margin-bottom: 10px;
-      font-size: 13px;
-    }
+    .med-item { margin-bottom: 12px; font-size: 14px; color: #2c3e50; }
+    .med-item strong { color: #8b5a8c; }
     .footer {
-      margin-top: 40px;
       text-align: center;
-      border-top: 1px solid #ddd;
+      margin-top: 50px;
       padding-top: 30px;
+      border-top: 1px solid #eee;
       font-size: 12px;
-      color: #666;
+      color: #999;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="clinic-name">🦷 Clínica DentalCare</div>
-    <div class="clinic-details">
+  <div class="page">
+    <div class="header">
       {{#if logoUrl}}
-        <img src="{{logoUrl}}" alt="Logo" style="width: 60px; margin-bottom: 10px; object-fit: contain;">
-        <br>
+        <img src="{{logoUrl}}" alt="Logo Clínica" class="logo">
       {{/if}}
-      Rua da Saúde, 123 • São Paulo, SP • Tel: (11) 3333-3333<br>
-      CNPJ: 12.345.678/0001-90 • CRO: 12345
+      <div class="header-text">
+        <h1>🦷 DENTALCARE</h1>
+        <p>Clínica Odontológica</p>
+      </div>
     </div>
-  </div>
 
-  <h2>📋 FICHA DE ANAMNESE ODONTOLÓGICA</h2>
+    <h2>📋 FICHA DE ANAMNESE ODONTOLÓGICA</h2>
 
-  <div class="patient-section">
-    <div class="patient-row">
-      <span class="label">Paciente:</span>
-      <span class="value"><strong>{{patientName}}</strong></span>
+    <div class="patient-section">
+      <div class="patient-row">
+        <span class="label">Paciente:</span>
+        <span class="value"><strong>{{patientName}}</strong></span>
+      </div>
+      <div class="patient-row">
+        <span class="label">Idade:</span>
+        <span class="value">{{patientAge}} anos</span>
+      </div>
+      <div class="patient-row">
+        <span class="label">Telefone:</span>
+        <span class="value">{{patientPhone}}</span>
+      </div>
+      <div class="patient-row">
+        <span class="label">Email:</span>
+        <span class="value">{{patientEmail}}</span>
+      </div>
+      <div class="patient-row">
+        <span class="label">Data da Consulta:</span>
+        <span class="value">{{currentDate}}</span>
+      </div>
     </div>
-    <div class="patient-row">
-      <span class="label">Idade:</span>
-      <span class="value">{{patientAge}} anos</span>
-    </div>
-    <div class="patient-row">
-      <span class="label">Telefone:</span>
-      <span class="value">{{patientPhone}}</span>
-    </div>
-    <div class="patient-row">
-      <span class="label">Email:</span>
-      <span class="value">{{patientEmail}}</span>
-    </div>
-    <div class="patient-row">
-      <span class="label">Data da Consulta:</span>
-      <span class="value">{{currentDate}}</span>
-    </div>
-  </div>
 
-  <h2>❓ QUESTIONÁRIO CLÍNICO</h2>
-
-  {{#each questions}}
-  <div class="question-item">
-    <div class="question-text">
-      <span class="checkbox {{#if this.checked}}checked{{/if}}"></span>
-      {{this.question}}
+    <h2>❓ QUESTIONÁRIO CLÍNICO</h2>
+    <div class="questions-list">
+      {{#each questions}}
+      <div class="question-item">
+        <div class="question-text">
+          <div class="checkbox {{#if this.checked}}checked{{/if}}"></div>
+          <div class="question-label">{{this.question}}</div>
+        </div>
+        {{#if this.notes}}<div class="notes">{{this.notes}}</div>{{/if}}
+      </div>
+      {{/each}}
     </div>
-    {{#if this.notes}}
-    <div class="notes">
-      {{this.notes}}
+
+    {{#if medications.length}}
+    <h2>💊 MEDICAMENTOS CONTÍNUOS</h2>
+    <div class="meds-section">
+      {{#each medications}}
+      <div class="med-item">
+        <strong>{{this.name}}</strong> - {{this.dosage}} • {{this.frequency}}
+      </div>
+      {{/each}}
     </div>
     {{/if}}
-  </div>
-  {{/each}}
 
-  {{#if medications.length}}
-  <h2>💊 MEDICAMENTOS CONTÍNUOS</h2>
-  <div class="medication-section">
-    {{#each medications}}
-    <div class="medication-item">
-      <strong>{{this.name}}</strong> - {{this.dosage}} • {{this.frequency}}
+    {{#if observations}}
+    <h2>📝 OBSERVAÇÕES</h2>
+    <div class="meds-section">
+      {{{observationsFormatted}}}
     </div>
-    {{/each}}
-  </div>
-  {{/if}}
+    {{/if}}
 
-  {{#if observations}}
-  <h2>📝 OBSERVAÇÕES</h2>
-  <div class="medication-section">
-    {{{observationsFormatted}}}
-  </div>
-  {{/if}}
-
-  <div class="footer">
-    Documento preenchido em {{currentDate}}<br>
-    Dr. Roberto Silva • CRO 12345
+    <div class="footer">
+      Documento preenchido em {{currentDate}}<br>
+      Dr. Roberto Silva • CRO 12345 | Clínica DentalCare
+    </div>
   </div>
 </body>
 </html>

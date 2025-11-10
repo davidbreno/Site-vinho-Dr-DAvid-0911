@@ -6,138 +6,87 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      color: #333;
-      line-height: 1.8;
-      padding: 60px 40px;
-      background: white;
-      max-width: 700px;
-      margin: 0 auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2c3e50;
+      background: #fff;
+      padding: 50px 60px;
+      line-height: 1.7;
     }
+    .page { max-width: 800px; margin: 0 auto; }
     .header {
-      text-align: center;
-      margin-bottom: 50px;
-      border-bottom: 2px solid #003366;
-      padding-bottom: 20px;
-    }
-    .clinic-name {
-      font-size: 20px;
-      font-weight: bold;
-      color: #003366;
-      margin-bottom: 10px;
-    }
-    .clinic-details {
-      font-size: 11px;
-      color: #666;
-    }
-    .title {
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      color: #003366;
-      margin: 40px 0;
-      text-decoration: underline;
-    }
-    .content {
-      text-align: justify;
-      line-height: 2;
-      margin-bottom: 40px;
-      font-size: 14px;
-    }
-    .patient-name {
-      font-weight: bold;
-      text-decoration: underline;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    .section-title {
-      font-weight: bold;
-      color: #003366;
-      margin-bottom: 8px;
-    }
-    .section-content {
-      margin-left: 20px;
-    }
-    .days-info {
-      background: #f0f7ff;
-      padding: 15px;
-      border-left: 4px solid #003366;
-      margin: 20px 0;
-      font-size: 13px;
-    }
-    .footer {
-      margin-top: 80px;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
+      margin-bottom: 60px;
+      padding-bottom: 30px;
+      border-bottom: 3px solid #8b5a8c;
     }
-    .signature-line {
-      width: 250px;
-      border-top: 1px solid #333;
-      text-align: center;
-      padding-top: 10px;
-      font-weight: bold;
-      color: #003366;
+    .logo { width: 80px; height: 80px; margin-right: 30px; object-fit: contain; }
+    .header-text h1 { font-size: 28px; color: #8b5a8c; font-weight: bold; margin-bottom: 5px; }
+    .header-text p { font-size: 13px; color: #666; }
+    .title-section { text-align: center; margin: 60px 0; }
+    .title-section h2 { font-size: 32px; color: #8b5a8c; font-weight: bold; letter-spacing: 2px; }
+    .content { text-align: justify; font-size: 15px; line-height: 1.9; margin-bottom: 40px; }
+    .content p { margin-bottom: 20px; }
+    .patient-name { font-weight: bold; color: #2c3e50; text-decoration: underline; }
+    .highlight-box {
+      background: linear-gradient(135deg, #f5f0f7 0%, #faf8fc 100%);
+      padding: 25px 30px;
+      border-left: 5px solid #8b5a8c;
+      margin: 30px 0;
+      border-radius: 3px;
     }
-    .cro {
-      font-size: 12px;
-      margin-top: 5px;
-      color: #666;
-    }
-    .place-date {
-      text-align: center;
-      font-size: 12px;
-      color: #666;
-      margin-top: 40px;
-    }
+    .highlight-box strong { color: #8b5a8c; font-size: 16px; }
+    .signature-section { margin-top: 80px; display: flex; justify-content: space-between; padding-top: 60px; border-top: 1px solid #ddd; }
+    .signature-box { text-align: center; width: 45%; }
+    .signature-line { border-top: 2px solid #2c3e50; margin-bottom: 15px; width: 100%; height: 60px; }
+    .signature-name { font-weight: bold; color: #2c3e50; font-size: 14px; }
+    .signature-info { font-size: 12px; color: #666; margin-top: 5px; }
+    .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="clinic-name">🦷 Clínica DentalCare</div>
-    <div class="clinic-details">
+  <div class="page">
+    <div class="header">
       {{#if logoUrl}}
-        <img src="{{logoUrl}}" alt="Logo" style="width: 60px; margin-bottom: 10px; object-fit: contain;">
-        <br>
+        <img src="{{logoUrl}}" alt="Logo Clínica" class="logo">
       {{/if}}
-      Rua da Saúde, 123 • São Paulo, SP • Tel: (11) 3333-3333
-    </div>
-  </div>
-
-  <div class="title">ATESTADO ODONTOLÓGICO</div>
-
-  <div class="content">
-    <p>Atesto para os devidos fins que o(a) paciente <span class="patient-name">{{patientName}}</span>, portador(a) da cédula de identidade {{patientId}} e inscrito(a) no CPF sob o número {{patientCpf}}, esteve sob os meus cuidados profissionais em <strong>{{currentDate}}</strong>.</p>
-
-    {{#if reason}}
-    <div class="section">
-      <div class="section-title">Motivo do Atestado:</div>
-      <div class="section-content">{{{reasonFormatted}}}</div>
-    </div>
-    {{/if}}
-
-    {{#if cid}}
-    <div class="section">
-      <div class="section-title">Diagnóstico CID:</div>
-      <div class="section-content">{{cid}}</div>
-    </div>
-    {{/if}}
-
-    <div class="days-info">
-      <strong>Necessita afastamento de suas atividades pelo período de <u>{{days}} dia(s)</u></strong>, a partir desta data.
+      <div class="header-text">
+        <h1>🦷 DENTALCARE</h1>
+        <p>Clínica Odontológica</p>
+      </div>
     </div>
 
-    <p>Por ser verdade, firmo o presente.</p>
-  </div>
+    <div class="title-section">
+      <h2>ATESTADO ODONTOLÓGICO</h2>
+    </div>
 
-  <div class="footer">
-    <div class="signature-line">Dr. Roberto Silva</div>
-    <div class="cro">CRO: 12345</div>
-  </div>
+    <div class="content">
+      <p>Atesto para os devidos fins que o(a) paciente <span class="patient-name">{{patientName}}</span>, portador(a) do RG {{patientId}} e CPF {{patientCpf}}, esteve sob os meus cuidados profissionais em <strong>{{currentDate}}</strong>.</p>
+      {{#if reason}}<p><strong>Motivo:</strong> {{{reasonFormatted}}}</p>{{/if}}
+      {{#if cid}}<p><strong>Diagnóstico (CID):</strong> {{cid}}</p>{{/if}}
+    </div>
 
-  <div class="place-date">
-    São Paulo, {{currentDate}}
+    <div class="highlight-box">
+      <strong>O paciente necessita afastamento de suas atividades pelo período de {{days}} dia(s)</strong>, a partir da data acima.
+    </div>
+
+    <p style="text-align: center; margin: 50px 0 30px; font-size: 14px; color: #666;">Por ser verdade, firmo o presente.</p>
+
+    <div class="signature-section">
+      <div class="signature-box">
+        <div class="signature-line"></div>
+        <div class="signature-name">Dr. Roberto Silva</div>
+        <div class="signature-info">CRO: 12345</div>
+      </div>
+      <div class="signature-box">
+        <div style="color: #666; font-size: 14px;">São Paulo, {{currentDate}}</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Clínica DentalCare | Rua da Saúde, 123 • São Paulo, SP • Tel: (11) 3333-3333
+    </div>
   </div>
 </body>
 </html>

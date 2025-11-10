@@ -12,7 +12,8 @@ const PORT = 3000;
 // aumentar o limite do body parser para permitir HTML maiores ao gerar PDFs
 app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname, "../frontend/build")));
+// Frontend roda em Vite (porta separada), não precisa servir aqui
+// app.use(express.static(path.join(__dirname, "../frontend/build")));
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 // Puppeteer será usado para geração de PDF server-side
@@ -167,13 +168,20 @@ app.post('/generate-pdf', async (req, res) => {
     return res.send(pdfBuffer);
   } catch (err) {
     console.error('Erro ao gerar PDF:', err);
-    return res.status(500).json({ error: err.message });
+    console.error('Stack:', err.stack);
+    return res.status(500).json({ error: err.message, stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined });
   }
 });
 
 // rota coringa para o React (deve vir por último)
+// Comentada porque o frontend roda em uma porta separada (Vite)
+// app.use((req, res) => {
+//   res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+// });
+
+// Rota 404 fallback
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  res.status(404).json({ error: 'Endpoint não encontrado. Use POST /generate-pdf para gerar PDFs.' });
 });
 
 app.listen(PORT, () => {
