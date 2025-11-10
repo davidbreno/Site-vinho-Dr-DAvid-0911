@@ -116,10 +116,39 @@ app.post('/generate-pdf', async (req, res) => {
     }
 
     // Renderiza HTML em PDF usando Puppeteer
-    const browser = await puppeteer.launch({
+    const launchConfig = {
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
       headless: 'new'
-    });
+    };
+
+    // Se PUPPETEER_SKIP_DOWNLOAD está ativado, tenta usar Chrome do sistema
+    if (process.env.PUPPETEER_SKIP_DOWNLOAD === 'true') {
+      // Caminho comum do Chrome em Windows
+      const possibleChromes = [
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        process.env.CHROME_PATH // fallback para env var customizada
+      ];
+      
+      let chromeFound = null;
+      for (const chromePath of possibleChromes) {
+        if (chromePath && fs.existsSync(chromePath)) {
+          chromeFound = chromePath;
+          break;
+        }
+      }
+
+      if (chromeFound) {
+        launchConfig.executablePath = chromeFound;
+      } else {
+        return res.status(500).json({ 
+          error: 'Chromium não encontrado. Instale Google Chrome ou remova PUPPETEER_SKIP_DOWNLOAD para download automático.',
+          hint: 'Instale Google Chrome e defina a env var: set CHROME_PATH=C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+        });
+      }
+    }
+
+    const browser = await puppeteer.launch(launchConfig);
     const page = await browser.newPage();
     await page.setContent(htmlToRender, { waitUntil: 'networkidle0' });
     const pdfBuffer = await page.pdf(
