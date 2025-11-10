@@ -406,56 +406,7 @@ Por ser verdade, firmo o presente.
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar para Pacientes
             </Button>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => {
-                  exportPdf({
-                    template: 'prescription',
-                    data: getPrescriptionData(),
-                    filename: `receita_${patient.name.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-                    serverEndpoint: 'http://localhost:3000/generate-pdf',
-                  });
-                }}
-                variant="outline"
-                className="text-neutral-50 border-neutral-50 hover:bg-primary-700"
-                title="Gerar receita em PDF usando template servidor"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Receita
-              </Button>
-              <Button
-                onClick={() => {
-                  exportPdf({
-                    template: 'certificate',
-                    data: getCertificateData(),
-                    filename: `atestado_${patient.name.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-                    serverEndpoint: 'http://localhost:3000/generate-pdf',
-                  });
-                }}
-                variant="outline"
-                className="text-neutral-50 border-neutral-50 hover:bg-primary-700"
-                title="Gerar atestado em PDF usando template servidor"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Atestado
-              </Button>
-              <Button
-                onClick={() => {
-                  exportPdf({
-                    template: 'anamnesis',
-                    data: getAnamnesisData(),
-                    filename: `anamnese_${patient.name.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-                    serverEndpoint: 'http://localhost:3000/generate-pdf',
-                  });
-                }}
-                variant="outline"
-                className="text-neutral-50 border-neutral-50 hover:bg-primary-700"
-                title="Gerar anamnese em PDF usando template servidor"
-              >
-                <ClipboardList className="w-4 h-4 mr-2" />
-                Anamnese
-              </Button>
-            </div>
+            <div></div>
           </div>
           <h1 className="text-neutral-50">Prontuário do Paciente</h1>
         </div>
@@ -527,16 +478,16 @@ Por ser verdade, firmo o presente.
         {/* Tabs for different sections */}
         <Tabs defaultValue="anamnese" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-neutral-200 mb-6">
-            <TabsTrigger value="anamnese" className="data-[state=active]:bg-primary-600 data-[state=active]:text-neutral-50">
-              <FileText className="w-4 h-4 mr-2" />
+            <TabsTrigger value="anamnese" className="data-[state=active]:bg-primary-600 data-[state=active]:text-neutral-50" onClick={() => {}}>
+              <Download className="w-4 h-4 mr-2" />
               Anamnese
             </TabsTrigger>
             <TabsTrigger value="prescription" className="data-[state=active]:bg-primary-600 data-[state=active]:text-neutral-50">
-              <Pill className="w-4 h-4 mr-2" />
+              <Download className="w-4 h-4 mr-2" />
               Prescrição
             </TabsTrigger>
             <TabsTrigger value="certificate" className="data-[state=active]:bg-primary-600 data-[state=active]:text-neutral-50">
-              <ClipboardList className="w-4 h-4 mr-2" />
+              <Download className="w-4 h-4 mr-2" />
               Atestado
             </TabsTrigger>
           </TabsList>
