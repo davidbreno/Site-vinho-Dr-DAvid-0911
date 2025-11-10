@@ -51,11 +51,11 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </button>
 
       {/* Logo/Header - Dark Background */}
-      <div className={`bg-gradient-to-b from-[#1a0d15] to-[#2d1420] ${isCollapsed ? 'px-2 py-8' : 'px-4 py-10'} transition-all duration-300 flex flex-col items-center justify-center`}>
+      <div className={`bg-gradient-to-b from-[#0d0609] to-[#1a0d15] ${isCollapsed ? 'px-2 py-8' : 'px-4 py-10'} transition-all duration-300 flex flex-col items-center justify-center`}>
         <img 
           src="/legacy-backend/public/assets/sem fundo.png" 
           alt="Logo" 
-          className={`${isCollapsed ? 'w-12 h-12' : 'w-16 h-16'} object-contain flex-shrink-0 transition-all duration-300`}
+          className={`${isCollapsed ? 'w-10 h-10' : 'w-14 h-14'} object-contain flex-shrink-0 transition-all duration-300`}
         />
         {!isCollapsed && (
           <div className="mt-4 text-center">
