@@ -51,18 +51,20 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </button>
 
       {/* Logo/Header - Dark Background */}
-      <div className={`bg-gradient-to-b from-[#0d0609] to-[#1a0d15] ${isCollapsed ? 'px-2 py-8' : 'px-4 py-10'} transition-all duration-300 flex flex-col items-center justify-center`}>
-        <img 
-          src="/legacy-backend/public/assets/sem fundo.png" 
-          alt="Logo" 
-          className={`${isCollapsed ? 'w-10 h-10' : 'w-14 h-14'} object-contain flex-shrink-0 transition-all duration-300`}
-        />
-        {!isCollapsed && (
-          <div className="mt-4 text-center">
-            <h3 className="text-neutral-50 text-sm font-semibold">Dr. David Breno</h3>
-            <p className="text-primary-200 text-[10px] mt-1">Odontologia</p>
-          </div>
-        )}
+      <div className={`bg-gradient-to-b from-[#0d0609] to-[#1a0d15] ${isCollapsed ? 'px-2 py-4' : 'px-4 py-4'} transition-all duration-300`}>
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2'}`}>
+          <img 
+            src="/legacy-backend/public/assets/sem fundo.png" 
+            alt="Logo" 
+            className="w-9 h-9 object-contain flex-shrink-0"
+          />
+          {!isCollapsed && (
+            <div>
+              <h3 className="text-neutral-50 text-sm font-semibold">Dr. David Breno</h3>
+              <p className="text-primary-200 text-[10px]">Odontologia</p>
+            </div>
+          )}
+        </div>
       </div>
 
       <Separator className="bg-primary-700" />
