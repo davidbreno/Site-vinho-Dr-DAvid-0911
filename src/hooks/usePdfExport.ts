@@ -51,12 +51,6 @@ function cleanCssForHtml2Canvas(element: HTMLElement): HTMLElement {
  * (Implementação simplificada dos templates como fallback client-side)
  */
 function generateTemplateHtml(template: string, data: Record<string, any>): string {
-  const clinicInfo = {
-    name: 'Clinica Dentcare',
-    cro: '12345',
-    doctor: 'Dr. Roberto Silva',
-  };
-
   const baseStyles = `
     <style>
       body { font-family: Arial, sans-serif; margin: 20px; color: #333; background: white; }
@@ -88,7 +82,7 @@ function generateTemplateHtml(template: string, data: Record<string, any>): stri
           <h1>RECEITUÁRIO MÉDICO ODONTOLÓGICO</h1>
         </div>
         <div class="patient-info">
-          <p><strong>Clínica:</strong> ${clinicInfo.name}</p>
+          <p><strong>Clínica:</strong> ${data.clinicName || 'Clínica'}</p>
           <p><strong>Data:</strong> ${data.currentDate}</p>
           <p><strong>PACIENTE:</strong> ${data.patientName}</p>
           <p><strong>IDADE:</strong> ${data.patientAge} anos</p>
@@ -102,9 +96,9 @@ function generateTemplateHtml(template: string, data: Record<string, any>): stri
         </div>
         <div class="signature">
           <p>_____________________</p>
-          <p>${clinicInfo.doctor}</p>
-          <p>CRO ${clinicInfo.cro}</p>
-          <p>${clinicInfo.name}</p>
+          <p>${data.doctorName || 'Profissional'}</p>
+          <p>CRO ${data.doctorCro || '00000'}</p>
+          <p>${data.clinicName || 'Clínica'}</p>
         </div>
       </body>
       </html>`;
@@ -119,7 +113,7 @@ function generateTemplateHtml(template: string, data: Record<string, any>): stri
           <h1>ATESTADO ODONTOLÓGICO</h1>
         </div>
         <div class="patient-info">
-          <p><strong>Clínica:</strong> ${clinicInfo.name}</p>
+          <p><strong>Clínica:</strong> ${data.clinicName || 'Clínica'}</p>
           <p><strong>Data:</strong> ${data.currentDate}</p>
           <p><strong>PACIENTE:</strong> ${data.patientName}</p>
           <p><strong>CPF:</strong> ${data.patientCpf || 'N/A'}</p>
@@ -132,9 +126,9 @@ function generateTemplateHtml(template: string, data: Record<string, any>): stri
         </div>
         <div class="signature">
           <p>_____________________</p>
-          <p>${clinicInfo.doctor}</p>
-          <p>CRO ${clinicInfo.cro}</p>
-          <p>${clinicInfo.name}</p>
+          <p>${data.doctorName || 'Profissional'}</p>
+          <p>CRO ${data.doctorCro || '00000'}</p>
+          <p>${data.clinicName || 'Clínica'}</p>
         </div>
       </body>
       </html>`;
@@ -159,7 +153,7 @@ function generateTemplateHtml(template: string, data: Record<string, any>): stri
           <h1>FICHA DE ANAMNESE</h1>
         </div>
         <div class="patient-info">
-          <p><strong>Clínica:</strong> ${clinicInfo.name}</p>
+          <p><strong>Clínica:</strong> ${data.clinicName || 'Clínica'}</p>
           <p><strong>Data:</strong> ${data.currentDate}</p>
           <p><strong>PACIENTE:</strong> ${data.patientName}</p>
           <p><strong>IDADE:</strong> ${data.patientAge} anos</p>
@@ -170,9 +164,9 @@ function generateTemplateHtml(template: string, data: Record<string, any>): stri
         ${questionsHtml}
         <div class="signature">
           <p>_____________________</p>
-          <p>${clinicInfo.doctor}</p>
-          <p>CRO ${clinicInfo.cro}</p>
-          <p>${clinicInfo.name}</p>
+          <p>${data.doctorName || 'Profissional'}</p>
+          <p>CRO ${data.doctorCro || '00000'}</p>
+          <p>${data.clinicName || 'Clínica'}</p>
         </div>
       </body>
       </html>`;
@@ -201,20 +195,24 @@ export function usePdfExport() {
     try {
       // Se template foi fornecido, usa servidor
       if (template && data) {
-        console.log(`[usePdfExport] Tentando gerar PDF com template "${template}" no servidor...`, data);
+        console.log(`[usePdfExport] Tentando gerar PDF com template "${template}" no servidor...`);
+        console.log(`[usePdfExport] DADOS ENVIADOS:`, JSON.stringify(data, null, 2));
         try {
+          const payloadToSend = {
+            template,
+            data: {
+              ...data,
+              // Passa a URL base dos assets para que Puppeteer possa servir as imagens
+              logoUrl: data.logoUrl || 'file:///C:/Users/Dr.%20David%20Breno/Videos/Dental%20Platform%20Dashboard%20(2)/legacy-backend/public/assets/logo.png',
+            },
+            options: { format, landscape },
+          };
+          console.log(`[usePdfExport] PAYLOAD COMPLETO:`, JSON.stringify(payloadToSend, null, 2));
+          
           const response = await fetch(serverEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              template,
-              data: {
-                ...data,
-                // Passa a URL base dos assets para que Puppeteer possa servir as imagens
-                logoUrl: data.logoUrl || 'file:///C:/Users/Dr.%20David%20Breno/Videos/Dental%20Platform%20Dashboard%20(2)/legacy-backend/public/assets/logo.png',
-              },
-              options: { format, landscape },
-            }),
+            body: JSON.stringify(payloadToSend),
           });
 
           if (response.ok) {

@@ -133,11 +133,11 @@
 <body>
   <div class="header">
     <div class="clinic-info">
-      <h1>🦷 Clínica DentalCare</h1>
+      <h1>🦷 {{clinicName}}</h1>
       <div class="clinic-details">
-        <div>Rua da Saúde, 123 • São Paulo, SP</div>
-        <div>Tel: (11) 3333-3333 • Email: contato@dentalcare.com.br</div>
-        <div>CNPJ: 12.345.678/0001-90 • CRO: 12345</div>
+        <div>{{clinicAddress}}</div>
+        <div>{{clinicPhone}} • {{clinicEmail}}</div>
+        <div>{{clinicCnpj}} • CRO: {{clinicCro}}</div>
       </div>
     </div>
     <div class="logo">
@@ -204,8 +204,8 @@
 
   <div class="footer">
     <div class="signature">
-      <div class="signature-line">Dr. Roberto Silva</div>
-      <div>CRO: 12345</div>
+      <div class="signature-line">{{doctorName}}</div>
+      <div>CRO: {{doctorCro}}</div>
       <div class="date">{{currentDate}}</div>
     </div>
   </div>

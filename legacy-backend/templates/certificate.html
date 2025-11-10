@@ -52,7 +52,7 @@
         <img src="{{logoUrl}}" alt="Logo Clínica" class="logo">
       {{/if}}
       <div class="header-text">
-        <h1>🦷 DENTALCARE</h1>
+        <h1>🦷 {{clinicName}}</h1>
         <p>Clínica Odontológica</p>
       </div>
     </div>
@@ -76,16 +76,16 @@
     <div class="signature-section">
       <div class="signature-box">
         <div class="signature-line"></div>
-        <div class="signature-name">Dr. Roberto Silva</div>
-        <div class="signature-info">CRO: 12345</div>
+        <div class="signature-name">{{doctorName}}</div>
+        <div class="signature-info">CRO: {{doctorCro}}</div>
       </div>
       <div class="signature-box">
-        <div style="color: #666; font-size: 14px;">São Paulo, {{currentDate}}</div>
+        <div style="color: #666; font-size: 14px;">{{clinicCity}}, {{currentDate}}</div>
       </div>
     </div>
 
     <div class="footer">
-      Clínica DentalCare | Rua da Saúde, 123 • São Paulo, SP • Tel: (11) 3333-3333
+      {{clinicName}} | {{clinicAddress}} • {{clinicPhone}}
     </div>
   </div>
 </body>

@@ -108,7 +108,8 @@ app.delete("/api/estoque/:id", (req, res) => {
 // 2. html direto: { html: '<html>...</html>' }
 app.post('/generate-pdf', async (req, res) => {
   console.log('📥 Requisição POST /generate-pdf recebida');
-  console.log('Body:', JSON.stringify(req.body).substring(0, 200));
+  console.log('📦 DADOS RECEBIDOS:', JSON.stringify(req.body, null, 2).substring(0, 500));
+  console.log('=====================================');
   
   if (!puppeteer) {
     return res.status(500).json({ error: 'puppeteer não instalado. Rode npm install em legacy-backend com PUPPETEER_SKIP_DOWNLOAD desligado ou use Chrome local.' });
@@ -122,6 +123,8 @@ app.post('/generate-pdf', async (req, res) => {
     if (template && data) {
       try {
         console.log(`🎨 Renderizando template: ${template}`);
+        console.log(`   Paciente: ${data.patientName || 'SEM NOME'}`);
+        console.log(`   Dados completos:`, JSON.stringify(data, null, 2).substring(0, 300));
         htmlToRender = renderTemplate(template, data);
         console.log(`✅ Template renderizado com sucesso`);
       } catch (err) {

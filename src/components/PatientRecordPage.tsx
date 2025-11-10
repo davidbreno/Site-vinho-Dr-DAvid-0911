@@ -339,6 +339,16 @@ Por ser verdade, firmo o presente.
     currentDate: new Date().toLocaleDateString('pt-BR'),
     medications: prescriptionItems,
     observations,
+    // Informações da clínica (customize aqui com seus dados)
+    clinicName: 'Clínica DentalCare',
+    clinicAddress: 'Rua da Saúde, 123 • São Paulo, SP',
+    clinicPhone: 'Tel: (11) 3333-3333',
+    clinicEmail: 'Email: contato@dentalcare.com.br',
+    clinicCnpj: 'CNPJ: 12.345.678/0001-90',
+    clinicCro: '12345',
+    // Informações do profissional (customize aqui)
+    doctorName: 'Dr. Roberto Silva',
+    doctorCro: '12345',
   });
 
   // Dados para template de Atestado
@@ -351,6 +361,14 @@ Por ser verdade, firmo o presente.
     reasonFormatted: certificateReason.replace(/\n/g, '<br>'),
     cid: certificateCID,
     days: certificateDays,
+    // Informações da clínica (customize aqui com seus dados)
+    clinicName: 'Clínica DentalCare',
+    clinicAddress: 'Rua da Saúde, 123 • São Paulo, SP',
+    clinicPhone: 'Tel: (11) 3333-3333',
+    clinicCity: 'São Paulo',
+    // Informações do profissional (customize aqui)
+    doctorName: 'Dr. Roberto Silva',
+    doctorCro: '12345',
   });
 
   // Dados para template de Anamnese
@@ -364,6 +382,14 @@ Por ser verdade, firmo o presente.
     medications: [], // pode preencher se houver campo de medicamentos contínuos
     observations: '',
     observationsFormatted: '',
+    // Informações da clínica (customize aqui com seus dados)
+    clinicName: 'Clínica DentalCare',
+    clinicAddress: 'Rua da Saúde, 123 • São Paulo, SP',
+    clinicPhone: 'Tel: (11) 3333-3333',
+    clinicCity: 'São Paulo',
+    // Informações do profissional (customize aqui)
+    doctorName: 'Dr. Roberto Silva',
+    doctorCro: '12345',
   });
 
   return (
