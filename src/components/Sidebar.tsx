@@ -51,14 +51,14 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </button>
 
       {/* Logo/Header - Dark Background */}
-      <div className={`bg-gradient-to-b from-[#1a0d15] to-[#2d1420] ${isCollapsed ? 'px-2 py-6' : 'px-4 py-8'} transition-all duration-300 flex flex-col items-center justify-center`}>
+      <div className={`bg-gradient-to-b from-[#1a0d15] to-[#2d1420] ${isCollapsed ? 'px-2 py-8' : 'px-4 py-10'} transition-all duration-300 flex flex-col items-center justify-center`}>
         <img 
           src="/legacy-backend/public/assets/sem fundo.png" 
           alt="Logo" 
           className={`${isCollapsed ? 'w-12 h-12' : 'w-16 h-16'} object-contain flex-shrink-0 transition-all duration-300`}
         />
         {!isCollapsed && (
-          <div className="mt-3 text-center">
+          <div className="mt-4 text-center">
             <h3 className="text-neutral-50 text-sm font-semibold">Dr. David Breno</h3>
             <p className="text-primary-200 text-[10px] mt-1">Odontologia</p>
           </div>
