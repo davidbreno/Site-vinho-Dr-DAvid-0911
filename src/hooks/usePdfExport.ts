@@ -269,15 +269,27 @@ export function usePdfExport() {
         console.log('[usePdfExport] Gerando HTML de fallback para template:', template);
         const fallbackHtml = generateTemplateHtml(template, data);
         
-        // Cria elemento temporário, adiciona ao DOM, renderiza e remove
+        // Cria elemento temporário INVISÍVEL no DOM
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = fallbackHtml;
-        tempDiv.style.position = 'absolute';
-        tempDiv.style.left = '-9999px';
-        tempDiv.style.top = '-9999px';
-        tempDiv.style.width = '210mm'; // A4 width
-        document.body.appendChild(tempDiv);
+        tempDiv.style.position = 'fixed';
+        tempDiv.style.left = '0';
+        tempDiv.style.top = '0';
+        tempDiv.style.width = '210mm';
+        tempDiv.style.height = '297mm';
+        tempDiv.style.backgroundColor = 'white';
+        tempDiv.style.zIndex = '-9999';
+        tempDiv.style.pointerEvents = 'none';
         
+        // Parse HTML seguro
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(fallbackHtml, 'text/html');
+        
+        // Copia body do parsed HTML para tempDiv
+        while (doc.body.firstChild) {
+          tempDiv.appendChild(doc.body.firstChild);
+        }
+        
+        document.body.appendChild(tempDiv);
         targetElement = tempDiv;
       }
 
@@ -289,21 +301,25 @@ export function usePdfExport() {
         targetElement = el;
       }
 
-      // Limpa CSS problemático antes de renderizar
-      const cleanElement = cleanCssForHtml2Canvas(targetElement);
-      
-      // Captura canvas do elemento limpo
-      const canvas = await html2canvas(cleanElement, {
+      // Aguarda um pouco para o layout ser calculado
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Captura canvas do elemento
+      const canvas = await html2canvas(targetElement, {
         scale: 2,
         logging: false,
         backgroundColor: '#ffffff',
         allowTaint: true,
         useCORS: true,
+        ignoreElements: (el) => {
+          // Ignora elementos problemáticos
+          return el.tagName === 'SCRIPT' || el.tagName === 'STYLE';
+        },
       });
       
       // Remove elemento temporário se foi criado para template
       if (template && data && targetElement.parentElement) {
-        targetElement.parentElement.removeChild(targetElement);
+        document.body.removeChild(targetElement);
       }
 
       // Cria PDF
