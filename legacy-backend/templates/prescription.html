@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Receita - {{patientName}}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #333;
+      line-height: 1.6;
+      padding: 40px;
+      background: white;
+    }
+    .header {
+      border-bottom: 3px solid #003366;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .clinic-info h1 {
+      color: #003366;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .clinic-details {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .patient-section {
+      margin-bottom: 25px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 4px solid #003366;
+    }
+    .patient-row {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    .label {
+      font-weight: bold;
+      width: 120px;
+      color: #003366;
+    }
+    .value {
+      flex: 1;
+      color: #333;
+    }
+    h2 {
+      color: #003366;
+      font-size: 16px;
+      border-bottom: 2px solid #003366;
+      padding-bottom: 10px;
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    table thead {
+      background: #003366;
+      color: white;
+    }
+    table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+    table tbody tr:hover {
+      background: #f5f5f5;
+    }
+    .observations {
+      background: #f0f7ff;
+      padding: 15px;
+      border-left: 4px solid #003366;
+      margin-bottom: 30px;
+      font-size: 13px;
+    }
+    .observations strong {
+      color: #003366;
+    }
+    .footer {
+      margin-top: 50px;
+      text-align: center;
+      border-top: 1px solid #ddd;
+      padding-top: 30px;
+    }
+    .signature {
+      display: inline-block;
+      width: 250px;
+    }
+    .signature-line {
+      border-top: 1px solid #333;
+      margin-top: 30px;
+      padding-top: 8px;
+      font-weight: bold;
+      color: #003366;
+    }
+    .date {
+      color: #666;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+    .no-items {
+      color: #999;
+      font-style: italic;
+      padding: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="clinic-info">
+      <h1>🦷 Clínica DentalCare</h1>
+      <div class="clinic-details">
+        <div>Rua da Saúde, 123 • São Paulo, SP</div>
+        <div>Tel: (11) 3333-3333 • Email: contato@dentalcare.com.br</div>
+        <div>CNPJ: 12.345.678/0001-90 • CRO: 12345</div>
+      </div>
+    </div>
+    <div class="logo">
+      {{#if logoUrl}}
+        <img src="{{logoUrl}}" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
+      {{else}}
+        📋
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="patient-section">
+    <div class="patient-row">
+      <span class="label">Paciente:</span>
+      <span class="value"><strong>{{patientName}}</strong></span>
+    </div>
+    <div class="patient-row">
+      <span class="label">Idade:</span>
+      <span class="value">{{patientAge}} anos</span>
+    </div>
+    <div class="patient-row">
+      <span class="label">Telefone:</span>
+      <span class="value">{{patientPhone}}</span>
+    </div>
+    <div class="patient-row">
+      <span class="label">Data:</span>
+      <span class="value">{{currentDate}}</span>
+    </div>
+  </div>
+
+  <h2>📋 PRESCRIÇÃO FARMACÊUTICA</h2>
+
+  {{#if medications.length}}
+  <table>
+    <thead>
+      <tr>
+        <th>Medicamento</th>
+        <th>Dosagem</th>
+        <th>Frequência</th>
+        <th>Duração</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each medications}}
+      <tr>
+        <td>{{this.medication}}</td>
+        <td>{{this.dosage}}</td>
+        <td>{{this.frequency}}</td>
+        <td>{{this.duration}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{else}}
+  <div class="no-items">Nenhum medicamento prescrito</div>
+  {{/if}}
+
+  {{#if observations}}
+  <div class="observations">
+    <strong>Observações Importantes:</strong><br>
+    {{{observationsFormatted}}}
+  </div>
+  {{/if}}
+
+  <div class="footer">
+    <div class="signature">
+      <div class="signature-line">Dr. Roberto Silva</div>
+      <div>CRO: 12345</div>
+      <div class="date">{{currentDate}}</div>
+    </div>
+  </div>
+</body>
+</html>

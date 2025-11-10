@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Atestado - {{patientName}}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #333;
+      line-height: 1.8;
+      padding: 60px 40px;
+      background: white;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+      border-bottom: 2px solid #003366;
+      padding-bottom: 20px;
+    }
+    .clinic-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #003366;
+      margin-bottom: 10px;
+    }
+    .clinic-details {
+      font-size: 11px;
+      color: #666;
+    }
+    .title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #003366;
+      margin: 40px 0;
+      text-decoration: underline;
+    }
+    .content {
+      text-align: justify;
+      line-height: 2;
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+    .patient-name {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-weight: bold;
+      color: #003366;
+      margin-bottom: 8px;
+    }
+    .section-content {
+      margin-left: 20px;
+    }
+    .days-info {
+      background: #f0f7ff;
+      padding: 15px;
+      border-left: 4px solid #003366;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+    .footer {
+      margin-top: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .signature-line {
+      width: 250px;
+      border-top: 1px solid #333;
+      text-align: center;
+      padding-top: 10px;
+      font-weight: bold;
+      color: #003366;
+    }
+    .cro {
+      font-size: 12px;
+      margin-top: 5px;
+      color: #666;
+    }
+    .place-date {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="clinic-name">🦷 Clínica DentalCare</div>
+    <div class="clinic-details">
+      {{#if logoUrl}}
+        <img src="{{logoUrl}}" alt="Logo" style="width: 60px; margin-bottom: 10px; object-fit: contain;">
+        <br>
+      {{/if}}
+      Rua da Saúde, 123 • São Paulo, SP • Tel: (11) 3333-3333
+    </div>
+  </div>
+
+  <div class="title">ATESTADO ODONTOLÓGICO</div>
+
+  <div class="content">
+    <p>Atesto para os devidos fins que o(a) paciente <span class="patient-name">{{patientName}}</span>, portador(a) da cédula de identidade {{patientId}} e inscrito(a) no CPF sob o número {{patientCpf}}, esteve sob os meus cuidados profissionais em <strong>{{currentDate}}</strong>.</p>
+
+    {{#if reason}}
+    <div class="section">
+      <div class="section-title">Motivo do Atestado:</div>
+      <div class="section-content">{{{reasonFormatted}}}</div>
+    </div>
+    {{/if}}
+
+    {{#if cid}}
+    <div class="section">
+      <div class="section-title">Diagnóstico CID:</div>
+      <div class="section-content">{{cid}}</div>
+    </div>
+    {{/if}}
+
+    <div class="days-info">
+      <strong>Necessita afastamento de suas atividades pelo período de <u>{{days}} dia(s)</u></strong>, a partir desta data.
+    </div>
+
+    <p>Por ser verdade, firmo o presente.</p>
+  </div>
+
+  <div class="footer">
+    <div class="signature-line">Dr. Roberto Silva</div>
+    <div class="cro">CRO: 12345</div>
+  </div>
+
+  <div class="place-date">
+    São Paulo, {{currentDate}}
+  </div>
+</body>
+</html>

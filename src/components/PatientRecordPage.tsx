@@ -331,6 +331,41 @@ Por ser verdade, firmo o presente.
     `;
   };
 
+  // Dados para template de Receita (via servidor Handlebars)
+  const getPrescriptionData = () => ({
+    patientName: patient.name,
+    patientAge: patient.age,
+    patientPhone: patient.phone,
+    currentDate: new Date().toLocaleDateString('pt-BR'),
+    medications: prescriptionItems,
+    observations,
+  });
+
+  // Dados para template de Atestado
+  const getCertificateData = () => ({
+    patientName: patient.name,
+    patientId: '12.345.678-9', // placeholder
+    patientCpf: '123.456.789-00', // placeholder
+    currentDate: new Date().toLocaleDateString('pt-BR'),
+    reason: certificateReason,
+    reasonFormatted: certificateReason.replace(/\n/g, '<br>'),
+    cid: certificateCID,
+    days: certificateDays,
+  });
+
+  // Dados para template de Anamnese
+  const getAnamnesisData = () => ({
+    patientName: patient.name,
+    patientAge: patient.age,
+    patientPhone: patient.phone,
+    patientEmail: patient.email,
+    currentDate: new Date().toLocaleDateString('pt-BR'),
+    questions: anamneseData,
+    medications: [], // pode preencher se houver campo de medicamentos contínuos
+    observations: '',
+    observationsFormatted: '',
+  });
+
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Header */}
@@ -345,21 +380,56 @@ Por ser verdade, firmo o presente.
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar para Pacientes
             </Button>
-            <Button
-              onClick={() => {
-                const prescriptionHtml = generatePrescriptionHtml();
-                exportPdf({
-                  html: prescriptionHtml,
-                  filename: `receita_${patient.name.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-                  serverEndpoint: 'http://localhost:3000/generate-pdf',
-                });
-              }}
-              variant="outline"
-              className="text-neutral-50 border-neutral-50 hover:bg-primary-700"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Exportar Receita
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  exportPdf({
+                    template: 'prescription',
+                    data: getPrescriptionData(),
+                    filename: `receita_${patient.name.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+                    serverEndpoint: 'http://localhost:3000/generate-pdf',
+                  });
+                }}
+                variant="outline"
+                className="text-neutral-50 border-neutral-50 hover:bg-primary-700"
+                title="Gerar receita em PDF usando template servidor"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Receita
+              </Button>
+              <Button
+                onClick={() => {
+                  exportPdf({
+                    template: 'certificate',
+                    data: getCertificateData(),
+                    filename: `atestado_${patient.name.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+                    serverEndpoint: 'http://localhost:3000/generate-pdf',
+                  });
+                }}
+                variant="outline"
+                className="text-neutral-50 border-neutral-50 hover:bg-primary-700"
+                title="Gerar atestado em PDF usando template servidor"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Atestado
+              </Button>
+              <Button
+                onClick={() => {
+                  exportPdf({
+                    template: 'anamnesis',
+                    data: getAnamnesisData(),
+                    filename: `anamnese_${patient.name.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+                    serverEndpoint: 'http://localhost:3000/generate-pdf',
+                  });
+                }}
+                variant="outline"
+                className="text-neutral-50 border-neutral-50 hover:bg-primary-700"
+                title="Gerar anamnese em PDF usando template servidor"
+              >
+                <ClipboardList className="w-4 h-4 mr-2" />
+                Anamnese
+              </Button>
+            </div>
           </div>
           <h1 className="text-neutral-50">Prontuário do Paciente</h1>
         </div>

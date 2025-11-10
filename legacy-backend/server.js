@@ -1,8 +1,10 @@
 ﻿const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const Handlebars = require("handlebars");
 
 const app = express();
 const PORT = 3000;
@@ -11,6 +13,7 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, "../frontend/build")));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 // Puppeteer será usado para geração de PDF server-side
 let puppeteer;
@@ -18,6 +21,29 @@ try {
   puppeteer = require('puppeteer');
 } catch (err) {
   console.warn('puppeteer não encontrado. Instale as dependências em legacy-backend e rode npm install.');
+}
+
+// Helper para formatar observações (quebra de linha em <br>)
+Handlebars.registerHelper('observationsFormatted', function(obs) {
+  if (!obs) return '';
+  return obs.replace(/\n/g, '<br>').replace(/\r/g, '');
+});
+
+// Helper para formatar motivo (similar)
+Handlebars.registerHelper('reasonFormatted', function(reason) {
+  if (!reason) return '';
+  return reason.replace(/\n/g, '<br>').replace(/\r/g, '');
+});
+
+// Função auxiliar para renderizar template Handlebars
+function renderTemplate(templateName, data) {
+  const templatePath = path.join(__dirname, 'templates', `${templateName}.html`);
+  if (!fs.existsSync(templatePath)) {
+    throw new Error(`Template não encontrado: ${templateName}`);
+  }
+  const templateContent = fs.readFileSync(templatePath, 'utf-8');
+  const template = Handlebars.compile(templateContent);
+  return template(data);
 }
 
 const dbPath = path.resolve(__dirname, 'database.sqlite');
@@ -63,25 +89,45 @@ app.delete("/api/estoque/:id", (req, res) => {
   db.run("DELETE FROM estoque WHERE id = ?", [req.params.id], err => res.json({ ok: !err }));
 });
 
-// rota coringa para o React
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
-});
-
-// Endpoint para geração de PDF a partir de HTML enviado no body
+// ===== ENDPOINT DE GERAÇÃO DE PDF =====
+// Suporta dois modos:
+// 1. template + data: { template: 'prescription', data: {...} }
+// 2. html direto: { html: '<html>...</html>' }
 app.post('/generate-pdf', async (req, res) => {
   if (!puppeteer) {
-    return res.status(500).json({ error: 'puppeteer não instalado no servidor. Rode npm install em legacy-backend.' });
+    return res.status(500).json({ error: 'puppeteer não instalado. Rode npm install em legacy-backend com PUPPETEER_SKIP_DOWNLOAD desligado ou use Chrome local.' });
   }
 
   try {
-    const { html, options } = req.body || {};
-    if (!html) return res.status(400).json({ error: 'Campo `html` é obrigatório no body.' });
+    const { template, data, html, options } = req.body || {};
+    let htmlToRender = html;
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    // Se enviou template + data, renderiza o template com Handlebars
+    if (template && data) {
+      try {
+        htmlToRender = renderTemplate(template, data);
+      } catch (err) {
+        return res.status(400).json({ error: `Erro ao renderizar template: ${err.message}` });
+      }
+    }
+
+    if (!htmlToRender) {
+      return res.status(400).json({ error: 'Envie `html` ou `template` + `data` no body.' });
+    }
+
+    // Renderiza HTML em PDF usando Puppeteer
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+      headless: 'new'
+    });
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-    const pdfBuffer = await page.pdf(Object.assign({ format: 'A4', printBackground: true }, options || {}));
+    await page.setContent(htmlToRender, { waitUntil: 'networkidle0' });
+    const pdfBuffer = await page.pdf(
+      Object.assign(
+        { format: 'A4', printBackground: true, margin: { top: '0.5cm', bottom: '0.5cm', left: '0.5cm', right: '0.5cm' } },
+        options || {}
+      )
+    );
     await browser.close();
 
     res.set({
@@ -96,6 +142,13 @@ app.post('/generate-pdf', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Servidor rodando em http://localhost:3000');
+// rota coringa para o React (deve vir por último)
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+  console.log(`📄 Templates disponíveis: prescription, certificate, anamnesis`);
+  console.log(`✨ POST /generate-pdf aceita: { template: 'name', data: {...} } ou { html: '<html>...</html>' }`);
 });

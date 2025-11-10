@@ -2,10 +2,12 @@ import { useCallback } from 'react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
-interface PdfExportOptions {
+export interface PdfExportOptions {
   filename?: string;
   elementId?: string;
   html?: string;
+  template?: string;
+  data?: Record<string, any>;
   format?: 'A4' | 'Letter';
   landscape?: boolean;
   serverEndpoint?: string;
@@ -13,22 +15,57 @@ interface PdfExportOptions {
 
 export function usePdfExport() {
   /**
-   * Exporta PDF via servidor (Puppeteer) se disponível, senão fallback client-side (html2canvas + jsPDF)
+   * Exporta PDF via servidor (Puppeteer com templates) se disponível,
+   * senão fallback client-side (html2canvas + jsPDF)
    */
   const exportPdf = useCallback(async (options: PdfExportOptions) => {
     const {
       filename = 'document.pdf',
       elementId,
       html,
+      template,
+      data,
       format = 'A4',
       landscape = false,
       serverEndpoint = 'http://localhost:3000/generate-pdf',
     } = options;
 
     try {
-      // Se html foi fornecido, tenta servidor primeiro
+      // Se template foi fornecido, usa servidor
+      if (template && data) {
+        console.log(`[usePdfExport] Tentando gerar PDF com template "${template}" no servidor...`);
+        try {
+          const response = await fetch(serverEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              template,
+              data: {
+                ...data,
+                // Passa a URL base dos assets para que Puppeteer possa servir as imagens
+                logoUrl: data.logoUrl || 'file:///C:/Users/Dr.%20David%20Breno/Videos/Dental%20Platform%20Dashboard%20(2)/legacy-backend/public/assets/logo.png',
+              },
+              options: { format, landscape },
+            }),
+          });
+
+          if (response.ok) {
+            console.log(`[usePdfExport] PDF gerado com template "${template}" com sucesso.`);
+            const blob = await response.blob();
+            downloadBlob(blob, filename);
+            return;
+          } else {
+            const errText = await response.text();
+            console.warn(`[usePdfExport] Servidor retornou erro (${response.status}):`, errText);
+          }
+        } catch (err) {
+          console.warn('[usePdfExport] Servidor indisponível, usando fallback client-side:', err);
+        }
+      }
+
+      // Se html foi fornecido, tenta servidor
       if (html) {
-        console.log('[usePdfExport] Tentando gerar PDF no servidor...');
+        console.log('[usePdfExport] Tentando gerar PDF a partir de HTML no servidor...');
         try {
           const response = await fetch(serverEndpoint, {
             method: 'POST',
@@ -40,7 +77,7 @@ export function usePdfExport() {
           });
 
           if (response.ok) {
-            console.log('[usePdfExport] PDF gerado no servidor com sucesso.');
+            console.log('[usePdfExport] PDF gerado a partir de HTML com sucesso.');
             const blob = await response.blob();
             downloadBlob(blob, filename);
             return;
