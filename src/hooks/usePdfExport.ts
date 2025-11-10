@@ -195,7 +195,7 @@ export function usePdfExport() {
       data,
       format = 'A4',
       landscape = false,
-      serverEndpoint = 'http://localhost:3000/generate-pdf',
+      serverEndpoint = '/generate-pdf',
     } = options;
 
     try {
@@ -229,6 +229,8 @@ export function usePdfExport() {
             // Continua para tentar fallback abaixo
           }
         } catch (err) {
+          console.error('[usePdfExport] Erro ao conectar servidor:', err);
+          console.error('[usePdfExport] Tentando em:', serverEndpoint);
           console.warn('[usePdfExport] Servidor indisponível, usando fallback client-side:', err);
           // Continua para tentar fallback abaixo
         }

@@ -9,8 +9,14 @@ const Handlebars = require("handlebars");
 const app = express();
 const PORT = 3000;
 
+// CORS configurado para permitir requisições do frontend em desenvolvimento
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true
+}));
+
 // aumentar o limite do body parser para permitir HTML maiores ao gerar PDFs
-app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' }));
 // Frontend roda em Vite (porta separada), não precisa servir aqui
 // app.use(express.static(path.join(__dirname, "../frontend/build")));
@@ -23,6 +29,12 @@ try {
 } catch (err) {
   console.warn('puppeteer não encontrado. Instale as dependências em legacy-backend e rode npm install.');
 }
+
+// ===== HEALTH CHECK =====
+app.get('/health', (req, res) => {
+  console.log('✅ Health check recebido');
+  res.json({ status: 'ok', message: 'Servidor rodando' });
+});
 
 // Helper para formatar observações (quebra de linha em <br>)
 Handlebars.registerHelper('observationsFormatted', function(obs) {
@@ -95,6 +107,9 @@ app.delete("/api/estoque/:id", (req, res) => {
 // 1. template + data: { template: 'prescription', data: {...} }
 // 2. html direto: { html: '<html>...</html>' }
 app.post('/generate-pdf', async (req, res) => {
+  console.log('📥 Requisição POST /generate-pdf recebida');
+  console.log('Body:', JSON.stringify(req.body).substring(0, 200));
+  
   if (!puppeteer) {
     return res.status(500).json({ error: 'puppeteer não instalado. Rode npm install em legacy-backend com PUPPETEER_SKIP_DOWNLOAD desligado ou use Chrome local.' });
   }
@@ -106,7 +121,9 @@ app.post('/generate-pdf', async (req, res) => {
     // Se enviou template + data, renderiza o template com Handlebars
     if (template && data) {
       try {
+        console.log(`🎨 Renderizando template: ${template}`);
         htmlToRender = renderTemplate(template, data);
+        console.log(`✅ Template renderizado com sucesso`);
       } catch (err) {
         return res.status(400).json({ error: `Erro ao renderizar template: ${err.message}` });
       }

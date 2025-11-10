@@ -8,8 +8,6 @@
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
-        // Keep only project-local alias. Specific package@version aliases were removed
-        // to avoid confusing module resolution. Imports should use plain package names.
         '@': path.resolve(__dirname, './src'),
       },
     },
@@ -20,5 +18,16 @@
     server: {
       port: 5173,
       open: true,
+      proxy: {
+        '/generate-pdf': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          rewrite: (path) => path,
+        },
+        '/health': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+        },
+      },
     },
   });
