@@ -53,13 +53,15 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       {/* Logo/Header */}
       <div className={`${isCollapsed ? 'px-2 py-5' : 'px-4 py-5'} transition-all duration-300`}>
         <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2'}`}>
-          <div className="w-9 h-9 rounded-xl bg-primary-600 flex items-center justify-center flex-shrink-0">
-            <Sparkles className="w-5 h-5" />
-          </div>
+          <img 
+            src="/legacy-backend/public/assets/sem fundo.png" 
+            alt="Logo" 
+            className="w-9 h-9 object-contain flex-shrink-0"
+          />
           {!isCollapsed && (
             <div>
-              <h3 className="text-neutral-50 text-sm">DentalCare</h3>
-              <p className="text-primary-200 text-[10px]">Gestão Odontológica</p>
+              <h3 className="text-neutral-50 text-sm">Dr. David Breno</h3>
+              <p className="text-primary-200 text-[10px]">Odontologia</p>
             </div>
           )}
         </div>
