@@ -11,6 +11,7 @@ import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 import type { Patient } from '../types/patient';
+import { usePdfExport } from '../hooks/usePdfExport';
 
 interface PatientRecordPageProps {
   patient: Patient;
@@ -25,6 +26,8 @@ interface AnamneseQuestion {
 }
 
 export function PatientRecordPage({ patient, onBack }: PatientRecordPageProps) {
+  const { exportPdf } = usePdfExport();
+  
   const [anamneseData, setAnamneseData] = useState<AnamneseQuestion[]>([
     { id: "1", question: "Está em tratamento médico atualmente?", checked: false, notes: "" },
     { id: "2", question: "Está tomando algum medicamento?", checked: false, notes: "" },
@@ -245,19 +248,119 @@ Por ser verdade, firmo o presente.
     window.URL.revokeObjectURL(url);
   };
 
+  const generatePrescriptionHtml = () => {
+    const prescriptionRows = prescriptionItems
+      .map(item => `
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+          <td style="padding: 12px; text-align: left;">${item.medication}</td>
+          <td style="padding: 12px; text-align: center;">${item.dosage}</td>
+          <td style="padding: 12px; text-align: center;">${item.frequency}</td>
+          <td style="padding: 12px; text-align: center;">${item.duration}</td>
+        </tr>
+      `)
+      .join('');
+
+    return `
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8">
+        <title>Receita - ${patient.name}</title>
+        <style>
+          body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; color: #333; }
+          .header { border-bottom: 3px solid #003366; margin-bottom: 30px; padding-bottom: 15px; }
+          .clinic-name { font-size: 24px; font-weight: bold; color: #003366; }
+          .clinic-info { font-size: 12px; color: #666; margin-top: 5px; }
+          .patient-info { margin-bottom: 30px; font-size: 14px; }
+          .patient-info p { margin: 5px 0; }
+          .label { font-weight: bold; color: #003366; display: inline-block; width: 120px; }
+          h3 { color: #003366; border-bottom: 2px solid #003366; padding-bottom: 8px; margin-top: 25px; margin-bottom: 15px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          th { background-color: #003366; color: white; padding: 12px; text-align: left; font-size: 13px; }
+          td { padding: 12px; font-size: 13px; }
+          .observations { background-color: #f5f5f5; padding: 15px; border-left: 4px solid #003366; margin-top: 20px; }
+          .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 20px; }
+          .signature-line { width: 200px; display: inline-block; border-top: 1px solid #333; margin-top: 40px; text-align: center; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="clinic-name">🦷 Clínica DentalCare</div>
+          <div class="clinic-info">
+            Endereço: Rua da Saúde, 123 | Tel: (11) 9999-9999<br>
+            CNPJ: 12.345.678/0001-90 | CRO: 12345
+          </div>
+        </div>
+
+        <div class="patient-info">
+          <p><span class="label">Paciente:</span> ${patient.name}</p>
+          <p><span class="label">Idade:</span> ${patient.age} anos</p>
+          <p><span class="label">Data:</span> ${new Date().toLocaleDateString('pt-BR')}</p>
+        </div>
+
+        <h3>📋 PRESCRIÇÃO</h3>
+        ${prescriptionItems.length > 0 ? `
+          <table>
+            <thead>
+              <tr>
+                <th>Medicamento</th>
+                <th>Dosagem</th>
+                <th>Frequência</th>
+                <th>Duração</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${prescriptionRows}
+            </tbody>
+          </table>
+        ` : '<p style="color: #999; font-style: italic;">Nenhum medicamento prescrito</p>'}
+
+        ${observations ? `
+          <div class="observations">
+            <strong>Observações:</strong><br>
+            ${observations.replace(/\n/g, '<br>')}
+          </div>
+        ` : ''}
+
+        <div class="footer">
+          <div class="signature-line">Dr. Roberto Silva</div>
+          <p>CRO 12345 | Clínica DentalCare</p>
+        </div>
+      </body>
+      </html>
+    `;
+  };
+
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Header */}
       <div className="bg-primary-800 text-neutral-50 p-6">
         <div className="max-w-7xl mx-auto">
-          <Button
-            onClick={onBack}
-            variant="ghost"
-            className="text-neutral-50 hover:bg-primary-700 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar para Pacientes
-          </Button>
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              onClick={onBack}
+              variant="ghost"
+              className="text-neutral-50 hover:bg-primary-700"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar para Pacientes
+            </Button>
+            <Button
+              onClick={() => {
+                const prescriptionHtml = generatePrescriptionHtml();
+                exportPdf({
+                  html: prescriptionHtml,
+                  filename: `receita_${patient.name.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+                  serverEndpoint: 'http://localhost:3000/generate-pdf',
+                });
+              }}
+              variant="outline"
+              className="text-neutral-50 border-neutral-50 hover:bg-primary-700"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Receita
+            </Button>
+          </div>
           <h1 className="text-neutral-50">Prontuário do Paciente</h1>
         </div>
       </div>
