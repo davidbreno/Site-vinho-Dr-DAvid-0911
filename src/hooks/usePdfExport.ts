@@ -268,8 +268,16 @@ export function usePdfExport() {
       if (template && data) {
         console.log('[usePdfExport] Gerando HTML de fallback para template:', template);
         const fallbackHtml = generateTemplateHtml(template, data);
+        
+        // Cria elemento temporário, adiciona ao DOM, renderiza e remove
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = fallbackHtml;
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.left = '-9999px';
+        tempDiv.style.top = '-9999px';
+        tempDiv.style.width = '210mm'; // A4 width
+        document.body.appendChild(tempDiv);
+        
         targetElement = tempDiv;
       }
 
@@ -292,6 +300,11 @@ export function usePdfExport() {
         allowTaint: true,
         useCORS: true,
       });
+      
+      // Remove elemento temporário se foi criado para template
+      if (template && data && targetElement.parentElement) {
+        targetElement.parentElement.removeChild(targetElement);
+      }
 
       // Cria PDF
       const pdf = new jsPDF({
