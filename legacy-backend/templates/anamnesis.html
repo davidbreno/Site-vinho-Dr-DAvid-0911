@@ -5,102 +5,223 @@
   <title>Anamnese - {{patientName}}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #2c3e50;
-      background: #fff;
-      padding: 50px 60px;
+      color: #1a1a1a;
+      background: white;
+      padding: 40px;
       line-height: 1.6;
     }
+    
     .page { max-width: 900px; margin: 0 auto; }
+    
+    /* HEADER */
     .header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 60px;
+      border-bottom: 3px solid #003d7a;
+      margin-bottom: 40px;
       padding-bottom: 30px;
-      border-bottom: 3px solid #8b5a8c;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
-    .logo { width: 80px; height: 80px; margin-right: 30px; object-fit: contain; }
-    .header-text h1 { font-size: 28px; color: #8b5a8c; font-weight: bold; margin-bottom: 5px; }
-    .header-text p { font-size: 13px; color: #666; }
-    h2 { color: #8b5a8c; font-size: 18px; border-bottom: 2px solid #8b5a8c; padding-bottom: 12px; margin: 35px 0 20px; }
+    
+    .header-left h1 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #003d7a;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    
+    .header-left p {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 3px;
+    }
+    
+    .header-right {
+      text-align: right;
+      font-size: 13px;
+    }
+    
+    .header-right p {
+      color: #666;
+      margin-bottom: 2px;
+      line-height: 1.6;
+    }
+    
+    .header-right strong {
+      color: #003d7a;
+      font-weight: 600;
+    }
+    
+    /* SEÇÕES */
+    h2 {
+      color: #003d7a;
+      font-size: 16px;
+      border-bottom: 2px solid #003d7a;
+      padding-bottom: 12px;
+      margin: 35px 0 20px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    
+    /* INFORMAÇÕES DO PACIENTE */
     .patient-section {
-      background: linear-gradient(135deg, #f5f0f7 0%, #faf8fc 100%);
+      background: linear-gradient(135deg, #f0f4f9 0%, #e8eef5 100%);
       padding: 25px 30px;
-      border-left: 5px solid #8b5a8c;
+      border-left: 5px solid #003d7a;
       margin-bottom: 30px;
-      border-radius: 3px;
+      border-radius: 2px;
     }
-    .patient-row { display: flex; margin-bottom: 12px; font-size: 14px; }
-    .label { font-weight: bold; width: 140px; color: #8b5a8c; }
-    .value { flex: 1; color: #2c3e50; }
-    .questions-list { margin-bottom: 30px; }
+    
+    .patient-row {
+      display: flex;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+    
+    .label {
+      font-weight: 600;
+      width: 140px;
+      color: #003d7a;
+    }
+    
+    .value {
+      flex: 1;
+      color: #1a1a1a;
+    }
+    
+    /* QUESTIONÁRIO */
+    .questions-list {
+      margin-bottom: 30px;
+    }
+    
     .question-item {
       margin-bottom: 18px;
       padding-bottom: 15px;
       border-bottom: 1px solid #f0f0f0;
     }
-    .question-text { font-weight: 500; color: #2c3e50; margin-bottom: 8px; display: flex; align-items: flex-start; }
+    
+    .question-text {
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+    }
+    
     .checkbox {
       display: inline-flex;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #8b5a8c;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #003d7a;
       border-radius: 3px;
       margin-right: 12px;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       margin-top: 2px;
+      background: white;
     }
-    .checkbox.checked { background: #8b5a8c; color: white; }
-    .checkbox.checked::after { content: '✓'; font-weight: bold; }
-    .question-label { flex: 1; }
+    
+    .checkbox.checked {
+      background: #003d7a;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .question-label {
+      flex: 1;
+    }
+    
     .notes {
       background: #f5f5f5;
       padding: 12px 15px;
-      border-left: 3px solid #ddd;
-      font-size: 13px;
+      border-left: 3px solid #003d7a;
+      font-size: 12px;
       margin-top: 10px;
       margin-left: 32px;
       font-style: italic;
       color: #666;
       border-radius: 2px;
     }
+    
+    /* MEDICAMENTOS */
     .meds-section {
-      background: linear-gradient(135deg, #f5f0f7 0%, #faf8fc 100%);
+      background: linear-gradient(135deg, #f0f4f9 0%, #e8eef5 100%);
       padding: 20px 25px;
-      border-left: 5px solid #8b5a8c;
+      border-left: 5px solid #003d7a;
       margin-bottom: 20px;
-      border-radius: 3px;
+      border-radius: 2px;
     }
-    .med-item { margin-bottom: 12px; font-size: 14px; color: #2c3e50; }
-    .med-item strong { color: #8b5a8c; }
+    
+    .med-item {
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #1a1a1a;
+    }
+    
+    .med-item strong {
+      color: #003d7a;
+      font-weight: 600;
+    }
+    
+    /* OBSERVAÇÕES */
+    .observations-section {
+      background: linear-gradient(135deg, #f0f4f9 0%, #e8eef5 100%);
+      padding: 20px 25px;
+      border-left: 5px solid #003d7a;
+      margin-bottom: 20px;
+      border-radius: 2px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #1a1a1a;
+    }
+    
+    /* FOOTER */
     .footer {
       text-align: center;
       margin-top: 50px;
       padding-top: 30px;
-      border-top: 1px solid #eee;
+      border-top: 2px solid #003d7a;
       font-size: 12px;
-      color: #999;
+      color: #666;
+      line-height: 1.8;
+    }
+    
+    @media print {
+      body { padding: 0; }
+      .page { max-width: 100%; }
     }
   </style>
 </head>
 <body>
   <div class="page">
+    <!-- HEADER -->
     <div class="header">
-      {{#if logoUrl}}
-        <img src="{{logoUrl}}" alt="Logo Clínica" class="logo">
-      {{/if}}
-      <div class="header-text">
-        <h1>🦷 {{clinicName}}</h1>
-        <p>Clínica Odontológica</p>
+      <div class="header-left">
+        <h1>🦷 CLÍNICA DENTALCARE</h1>
+        <p>Cirurgiã Dentista - Especialista em Odontologia</p>
+        <p><strong>Dra. David Breno Santos</strong></p>
+      </div>
+      <div class="header-right">
+        <p><strong>Contato:</strong></p>
+        <p>(38) 9 9979-0464</p>
+        <p>dr.davidbreno@hotmail.com</p>
+        <p>@dr.davidbreno</p>
+        <p style="margin-top: 8px;"><strong>CRO:</strong> 71476 - MG</p>
       </div>
     </div>
 
-    <h2>📋 FICHA DE ANAMNESE ODONTOLÓGICA</h2>
+    <!-- TÍTULO -->
+    <h2>Ficha de Anamnese Odontológica</h2>
 
+    <!-- INFORMAÇÕES DO PACIENTE -->
     <div class="patient-section">
       <div class="patient-row">
         <span class="label">Paciente:</span>
@@ -124,7 +245,8 @@
       </div>
     </div>
 
-    <h2>❓ QUESTIONÁRIO CLÍNICO</h2>
+    <!-- QUESTIONÁRIO CLÍNICO -->
+    <h2>Questionário Clínico</h2>
     <div class="questions-list">
       {{#each questions}}
       <div class="question-item">
@@ -137,8 +259,9 @@
       {{/each}}
     </div>
 
+    <!-- MEDICAMENTOS CONTÍNUOS -->
     {{#if medications.length}}
-    <h2>💊 MEDICAMENTOS CONTÍNUOS</h2>
+    <h2>Medicamentos Contínuos</h2>
     <div class="meds-section">
       {{#each medications}}
       <div class="med-item">
@@ -148,16 +271,19 @@
     </div>
     {{/if}}
 
+    <!-- OBSERVAÇÕES -->
     {{#if observations}}
-    <h2>📝 OBSERVAÇÕES</h2>
-    <div class="meds-section">
-      {{{observationsFormatted}}}
+    <h2>Observações</h2>
+    <div class="observations-section">
+      {{observations}}
     </div>
     {{/if}}
 
+    <!-- FOOTER -->
     <div class="footer">
-      Documento preenchido em {{currentDate}}<br>
-      {{doctorName}} • CRO {{doctorCro}} | {{clinicName}}
+      <p>Documento preenchido em {{currentDate}}</p>
+      <p><strong>{{doctorName}}</strong> | CRO {{doctorCro}}</p>
+      <p>{{clinicName}}</p>
     </div>
   </div>
 </body>
