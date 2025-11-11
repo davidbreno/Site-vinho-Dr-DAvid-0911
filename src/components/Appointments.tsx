@@ -1,15 +1,30 @@
-import { Calendar as CalendarIcon, Clock, Plus, Filter } from "lucide-react";
+import { Calendar as CalendarIcon, Plus, Filter } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Calendar } from "./ui/calendar";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 export function Appointments() {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
-  const appointments = [
+  type Appointment = {
+    id: number;
+    time: string;
+    duration: string;
+    patient: string;
+    treatment: string;
+    doctor: string;
+    status: "confirmed" | "pending";
+    avatar: string;
+  };
+
+  const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: 1,
       time: "09:00",
@@ -70,7 +85,46 @@ export function Appointments() {
       status: "confirmed",
       avatar: "CM"
     }
-  ];
+  ]);
+
+  const [openNew, setOpenNew] = useState(false);
+  const [form, setForm] = useState({
+    time: "09:00",
+    duration: "30 min",
+    patient: "",
+    treatment: "",
+    doctor: "",
+    status: "pending" as Appointment["status"],
+  });
+
+  const nextId = useMemo(() => (appointments.length ? Math.max(...appointments.map(a => a.id)) + 1 : 1), [appointments]);
+
+  const handleCreate = () => {
+    if (!form.patient || !form.time) return; // simples validação
+    const initials = form.patient
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(w => w[0]!.toUpperCase())
+      .join("") || "--";
+    const newAppointment: Appointment = {
+      id: nextId,
+      time: form.time,
+      duration: form.duration,
+      patient: form.patient,
+      treatment: form.treatment || "Consulta",
+      doctor: form.doctor || "—",
+      status: form.status,
+      avatar: initials,
+    };
+    setAppointments(prev => {
+      const list = [...prev, newAppointment];
+      // opcional: ordenar por horário HH:MM
+      return list.sort((a, b) => a.time.localeCompare(b.time));
+    });
+    setOpenNew(false);
+    setForm({ time: "09:00", duration: "30 min", patient: "", treatment: "", doctor: "", status: "pending" });
+  };
 
   const getStatusBadge = (status: string) => {
     if (status === "confirmed") {
@@ -87,11 +141,62 @@ export function Appointments() {
           <h1 className="text-primary-900">Agendamentos</h1>
           <p className="text-neutral-600 mt-1">Gerenciar consultas e horários</p>
         </div>
-        <Button className="bg-primary-600 hover:bg-primary-700 text-neutral-50">
+        <Button className="bg-primary-600 hover:bg-primary-700 text-neutral-50" onClick={() => setOpenNew(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Novo Agendamento
         </Button>
       </div>
+
+      {/* Novo Agendamento - Dialog */}
+      <Dialog open={openNew} onOpenChange={setOpenNew}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Novo Agendamento</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="patient">Paciente</Label>
+              <Input id="patient" placeholder="Nome do paciente" value={form.patient} onChange={e => setForm(f => ({ ...f, patient: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="doctor">Profissional</Label>
+              <Input id="doctor" placeholder="Nome do dentista" value={form.doctor} onChange={e => setForm(f => ({ ...f, doctor: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="time">Horário</Label>
+              <Input id="time" type="time" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="duration">Duração</Label>
+              <Input id="duration" placeholder="ex: 30 min" value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))} />
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <Label htmlFor="treatment">Procedimento</Label>
+              <Input id="treatment" placeholder="ex: Limpeza, Canal, etc." value={form.treatment} onChange={e => setForm(f => ({ ...f, treatment: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select value={form.status} onValueChange={(v) => setForm(f => ({ ...f, status: v as Appointment["status"] }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="confirmed">Confirmado</SelectItem>
+                  <SelectItem value="pending">Pendente</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Data</Label>
+              <Input disabled value={date ? date.toLocaleDateString() : "—"} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenNew(false)}>Cancelar</Button>
+            <Button className="bg-primary-600 hover:bg-primary-700 text-neutral-50" onClick={handleCreate} disabled={!form.patient || !form.time}>Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Calendar */}

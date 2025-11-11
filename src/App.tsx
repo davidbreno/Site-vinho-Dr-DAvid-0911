@@ -16,6 +16,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [viewingPatientRecord, setViewingPatientRecord] = useState(false);
+  
 
   const handleViewPatientRecord = (patient: Patient) => {
     setSelectedPatient(patient);

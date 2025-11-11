@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, Plus, Phone, Mail, Calendar, MoreVertical } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Label } from "./ui/label";
 
 import type { Patient } from '../types/patient';
 
@@ -15,7 +17,7 @@ interface PatientsProps {
 export function Patients({ onViewPatientRecord }: PatientsProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const patients: Patient[] = [
+  const [patients, setPatients] = useState<Patient[]>([
     {
       id: 1,
       name: "Maria Santos",
@@ -82,7 +84,43 @@ export function Patients({ onViewPatientRecord }: PatientsProps) {
       status: "active",
       avatar: "CM"
     }
-  ];
+  ]);
+
+  const [openNew, setOpenNew] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    age: "",
+    phone: "",
+    email: "",
+    nextVisit: "",
+  });
+
+  const nextId = useMemo(() => (patients.length ? Math.max(...patients.map(p => p.id)) + 1 : 1), [patients]);
+
+  const handleCreate = () => {
+    if (!form.name) return;
+    const initials = form.name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(w => w[0]!.toUpperCase())
+      .join("") || "--";
+    const today = new Date();
+    const newPatient: Patient = {
+      id: nextId,
+      name: form.name,
+      age: Number(form.age) || 0,
+      phone: form.phone,
+      email: form.email,
+      lastVisit: today.toLocaleDateString('pt-BR'),
+      nextVisit: form.nextVisit || null,
+      status: 'active',
+      avatar: initials,
+    };
+    setPatients(prev => [newPatient, ...prev]);
+    setOpenNew(false);
+    setForm({ name: "", age: "", phone: "", email: "", nextVisit: "" });
+  };
 
   const filteredPatients = patients.filter(patient =>
     patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -98,11 +136,50 @@ export function Patients({ onViewPatientRecord }: PatientsProps) {
           <h1 className="text-primary-900">Pacientes</h1>
           <p className="text-neutral-600 mt-1">Gerenciar pacientes cadastrados</p>
         </div>
-        <Button className="bg-primary-600 hover:bg-primary-700 text-neutral-50">
+        <Button className="bg-primary-600 hover:bg-primary-700 text-neutral-50" onClick={() => setOpenNew(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Novo Paciente
         </Button>
       </div>
+
+      {/* Novo Paciente - Dialog */}
+      <Dialog open={openNew} onOpenChange={setOpenNew}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Novo Paciente</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-2">
+            <div className="md:col-span-2 space-y-2">
+              <Label htmlFor="name">Nome</Label>
+              <Input id="name" placeholder="Nome completo" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="age">Idade</Label>
+              <Input id="age" type="number" min={0} value={form.age} onChange={e => setForm(f => ({ ...f, age: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Telefone</Label>
+              <Input id="phone" placeholder="(11) 99999-9999" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+            </div>
+            <div className="md:col-span-2 space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="email@exemplo.com" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="nextVisit">Próxima consulta</Label>
+              <Input id="nextVisit" placeholder="dd/mm/aaaa" value={form.nextVisit} onChange={e => setForm(f => ({ ...f, nextVisit: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="today">Cadastro</Label>
+              <Input id="today" disabled value={new Date().toLocaleDateString('pt-BR')} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenNew(false)}>Cancelar</Button>
+            <Button className="bg-primary-600 hover:bg-primary-700 text-neutral-50" onClick={handleCreate} disabled={!form.name}>Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Search & Filters */}
       <Card className="border-primary-900 shadow-sm">

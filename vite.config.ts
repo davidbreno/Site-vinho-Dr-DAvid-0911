@@ -7,17 +7,20 @@
     plugins: [react()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
     },
     build: {
-      target: 'esnext',
       outDir: 'build',
     },
     server: {
       port: 5173,
       open: true,
+      fs: {
+        // incluir raiz do projeto + pasta legacy como permitidas (evita 403 Restricted)
+        allow: [
+          path.resolve(__dirname),
+          path.resolve(__dirname, 'legacy-backend', 'public'),
+        ],
+      },
       proxy: {
         '/generate-pdf': {
           target: 'http://localhost:3000',

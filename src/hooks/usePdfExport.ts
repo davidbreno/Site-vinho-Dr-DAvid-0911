@@ -1,6 +1,4 @@
 import { useCallback } from 'react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 
 export interface PdfExportOptions {
   filename?: string;
@@ -11,6 +9,9 @@ export interface PdfExportOptions {
   format?: 'A4' | 'Letter';
   landscape?: boolean;
   serverEndpoint?: string;
+  layoutMode?: 'overlay-html' | 'background-text';
+  logo?: { path?: string; dataUrl?: string };
+  coords?: Record<string, any>;
 }
 
 /**
@@ -190,7 +191,21 @@ export function usePdfExport() {
       format = 'A4',
       landscape = false,
       serverEndpoint = '/generate-pdf',
+      layoutMode = 'overlay-html',
+      logo,
+      coords,
     } = options;
+
+    // Garante extensão .pdf no nome do arquivo
+    const safeFilename = String(filename).toLowerCase().endsWith('.pdf')
+      ? filename
+      : `${filename}.pdf`;
+
+    // Resolve URL absoluto do backend para desenvolvimento/produção
+    const backendBase = (import.meta as any)?.env?.VITE_BACKEND_URL || 'http://localhost:3000';
+    const endpointUrl = /^https?:\/\//i.test(serverEndpoint)
+      ? serverEndpoint
+      : `${backendBase.replace(/\/$/, '')}/${serverEndpoint.replace(/^\//, '')}`;
 
     try {
       // Se template foi fornecido, usa servidor
@@ -202,23 +217,28 @@ export function usePdfExport() {
             template,
             data: {
               ...data,
-              // Passa a URL base dos assets para que Puppeteer possa servir as imagens
-              logoUrl: data.logoUrl || 'file:///C:/Users/Dr.%20David%20Breno/Videos/Dental%20Platform%20Dashboard%20(2)/legacy-backend/public/assets/logo.png',
+              // dados do template
             },
+            filename: safeFilename,
+            background: 'auto',
+            layoutMode,
+            logo, // background-text usará isto para inserir a logo
+            coords, // permite overrides de posições
             options: { format, landscape },
           };
           console.log(`[usePdfExport] PAYLOAD COMPLETO:`, JSON.stringify(payloadToSend, null, 2));
           
-          const response = await fetch(serverEndpoint, {
+          const response = await fetch(endpointUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/pdf' },
             body: JSON.stringify(payloadToSend),
           });
 
-          if (response.ok) {
+          const ct = response.headers.get('content-type') || '';
+          if (response.ok && ct.includes('application/pdf')) {
             console.log(`[usePdfExport] PDF gerado com template "${template}" com sucesso.`);
             const blob = await response.blob();
-            downloadBlob(blob, filename);
+            downloadBlob(blob, safeFilename);
             return;
           } else {
             const errData = await response.json().catch(() => ({ error: 'Erro desconhecido' }));
@@ -228,7 +248,7 @@ export function usePdfExport() {
           }
         } catch (err) {
           console.error('[usePdfExport] Erro ao conectar servidor:', err);
-          console.error('[usePdfExport] Tentando em:', serverEndpoint);
+          console.error('[usePdfExport] Tentando em:', endpointUrl);
           console.warn('[usePdfExport] Servidor indisponível, usando fallback client-side:', err);
           // Continua para tentar fallback abaixo
         }
@@ -238,19 +258,20 @@ export function usePdfExport() {
       if (html) {
         console.log('[usePdfExport] Tentando gerar PDF a partir de HTML no servidor...');
         try {
-          const response = await fetch(serverEndpoint, {
+          const response = await fetch(endpointUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/pdf' },
             body: JSON.stringify({
               html,
               options: { format, landscape },
             }),
           });
 
-          if (response.ok) {
+          const ct = response.headers.get('content-type') || '';
+          if (response.ok && ct.includes('application/pdf')) {
             console.log('[usePdfExport] PDF gerado a partir de HTML com sucesso.');
             const blob = await response.blob();
-            downloadBlob(blob, filename);
+            downloadBlob(blob, safeFilename);
             return;
           } else {
             console.warn('[usePdfExport] Servidor retornou erro:', response.status);
@@ -305,6 +326,10 @@ export function usePdfExport() {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       // Captura canvas do elemento
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf')
+      ]);
       const canvas = await html2canvas(targetElement, {
         scale: 2,
         logging: false,
@@ -368,8 +393,8 @@ export function usePdfExport() {
         }
       }
 
-      pdf.save(filename);
-      console.log('[usePdfExport] PDF salvo localmente:', filename);
+  pdf.save(safeFilename);
+  console.log('[usePdfExport] PDF salvo localmente:', safeFilename);
     } catch (err) {
       console.error('[usePdfExport] Erro ao gerar PDF:', err);
       alert(`Erro ao gerar PDF: ${err instanceof Error ? err.message : String(err)}`);

@@ -1,132 +1,39 @@
-import { 
-  Users, 
-  Calendar, 
-  TrendingUp, 
-  DollarSign,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle
-} from "lucide-react";
+import { Clock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { 
-  LineChart, 
-  Line, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  Legend
-} from "recharts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
+const ChartsSection = lazy(() => import('./ChartsSection'));
+
+// Frases motivacionais (pode expandir depois)
+const motivationalQuotes = [
+  "Sorrir também é um tratamento.",
+  "Cada paciente é único.",
+  "Odontologia com propósito.",
+  "Pequenos cuidados, grandes resultados.",
+  "Excelência em cada detalhe."
+];
+
+function formatTime(d: Date) {
+  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+}
 
 export function Dashboard() {
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const motivationalQuotes = [
-    "Um sorriso é a curva que endireita tudo.",
-    "Sorrir é a melhor terapia, e você é o especialista nisso.",
-    "Cada paciente é uma oportunidade de transformar vidas.",
-    "A excelência não é um ato, mas um hábito.",
-    "Seu trabalho ilumina sorrisos todos os dias.",
-    "Transformar sorrisos é transformar vidas.",
-    "A dedicação de hoje é o sorriso de amanhã.",
-    "Pequenos gestos de cuidado fazem grande diferença.",
-    "Sua paixão pela odontologia inspira confiança.",
-    "Cada dente tratado é uma história de cuidado.",
-    "O sucesso é a soma de pequenos esforços repetidos.",
-    "Você é a razão de muitos sorrisos felizes.",
-    "A saúde bucal é o início da saúde plena.",
-    "Sua expertise transforma ansiedade em tranquilidade.",
-    "Fazer a diferença, um sorriso por vez.",
-    "A prevenção de hoje é a saúde de amanhã.",
-    "Seu conhecimento é o melhor instrumento.",
-    "Profissionalismo e empatia caminham juntos.",
-    "Cada consulta é uma oportunidade de excelência.",
-    "O cuidado que você oferece não tem preço.",
-    "Sorrisos saudáveis começam com seu trabalho.",
-    "Sua dedicação é inspiradora todos os dias.",
-    "A precisão e o cuidado definem sua arte.",
-    "Transforme dor em alívio, medo em confiança.",
-    "Você constrói autoestima através dos sorrisos.",
-    "A odontologia é ciência com toque humano.",
-    "Cada tratamento é um compromisso com a saúde.",
-    "Seu trabalho vai além dos dentes, toca vidas.",
-    "A paciência e o cuidado são suas ferramentas.",
-    "Continue sendo a diferença na vida dos pacientes."
-  ];
-
-  // Atualizar frase a cada 5 minutos
+  // Rotação da frase a cada 12s e atualização do relógio a cada minuto
   useEffect(() => {
-    const quoteInterval = setInterval(() => {
-      setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % motivationalQuotes.length);
-    }, 5 * 60 * 1000); // 5 minutos
-
-    return () => clearInterval(quoteInterval);
+    const quoteTimer = setInterval(() => {
+      setCurrentQuoteIndex((prev) => (prev + 1) % motivationalQuotes.length);
+    }, 12000);
+    const clockTimer = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => { clearInterval(quoteTimer); clearInterval(clockTimer); };
   }, []);
-
-  // Atualizar relógio a cada segundo
-  useEffect(() => {
-    const clockInterval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(clockInterval);
-  }, []);
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('pt-BR', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('pt-BR', { 
-      weekday: 'long',
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  };
-
-  const stats = [
-    {
-      title: "Pacientes Ativos",
-      value: "1,245",
-      change: "+12%",
-      icon: Users,
-      color: "text-primary-600"
-    },
-    {
-      title: "Consultas Hoje",
-      value: "18",
-      change: "6 pendentes",
-      icon: Calendar,
-      color: "text-primary-600"
-    },
-    {
-      title: "Receita Mensal",
-      value: "R$ 45.890",
-      change: "+8%",
-      icon: DollarSign,
-      color: "text-primary-600"
-    },
-    {
-      title: "Taxa de Ocupação",
-      value: "87%",
-      change: "+5%",
-      icon: TrendingUp,
-      color: "text-primary-600"
-    }
-  ];
 
   const revenueData = [
     { month: "Jan", receita: 35000, despesas: 20000 },
@@ -201,108 +108,20 @@ export function Dashboard() {
 
   return (
     <div className="p-8 space-y-8">
-      {/* Motivational Quote & Clock Bar */}
-      <div className="flex items-center justify-between gap-6 p-5 bg-gradient-to-r from-primary-50 to-neutral-50 rounded-2xl border border-primary-200/50 shadow-sm bg-[rgba(255,250,250,0)] mt-[0px] mr-[0px] mb-[32px] ml-[823px]">
+      {/* Barra de Hora e Frase Motivacional */}
+      <div className="flex items-center justify-between gap-6 px-8 py-2 bg-gradient-to-r from-primary-50 to-neutral-50 rounded-2xl border border-primary-200/50 shadow-sm w-[98vw] max-w-[1800px] mx-auto mt-8">
         <div className="flex-1">
-          <p className="text-primary-800 italic text-center">"{motivationalQuotes[currentQuoteIndex]}"</p>
+          <p className="text-primary-800 italic text-center text-base">"{motivationalQuotes[currentQuoteIndex]}"</p>
         </div>
         <div className="text-right border-l border-primary-300 pl-6">
           <p className="text-primary-900 text-2xl tabular-nums tracking-tight">{formatTime(currentTime)}</p>
           <p className="text-primary-600 text-xs mt-0.5 capitalize">{formatDate(currentTime)}</p>
         </div>
       </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.title} className="border-primary-900 shadow-md hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-neutral-600 text-sm">{stat.title}</p>
-                    <h3 className="text-primary-900 mt-2">{stat.value}</h3>
-                    <p className="text-primary-600 text-sm mt-1">{stat.change}</p>
-                  </div>
-                  <div className={`p-3 rounded-xl bg-primary-50 ${stat.color}`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue Chart */}
-        <Card className="border-primary-900 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-primary-900">Receita vs Despesas</CardTitle>
-            <CardDescription>Últimos 5 meses</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e8d5c4" />
-                <XAxis dataKey="month" stroke="#635750" />
-                <YAxis stroke="#635750" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#fdfcfb', 
-                    border: '1px solid #e8d5c4',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="receita" 
-                  stroke="#7a2b45" 
-                  strokeWidth={3}
-                  name="Receita"
-                  dot={{ fill: '#7a2b45', r: 4 }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="despesas" 
-                  stroke="#b8a899" 
-                  strokeWidth={3}
-                  name="Despesas"
-                  dot={{ fill: '#b8a899', r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Appointments Chart */}
-        <Card className="border-primary-900 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-primary-900">Consultas na Semana</CardTitle>
-            <CardDescription>Total de agendamentos</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={appointmentsData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e8d5c4" />
-                <XAxis dataKey="day" stroke="#635750" />
-                <YAxis stroke="#635750" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#fdfcfb', 
-                    border: '1px solid #e8d5c4',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Bar dataKey="consultas" fill="#8b3a57" radius={[8, 8, 0, 0]} name="Consultas" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Charts (lazy) */}
+      <Suspense fallback={<div className="text-center text-sm text-neutral-500">Carregando gráficos...</div>}>
+        <ChartsSection revenueData={revenueData} appointmentsData={appointmentsData} />
+      </Suspense>
 
       {/* Today's Appointments */}
       <Card className="border-primary-900 shadow-md">

@@ -37,11 +37,15 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   ];
 
   return (
-    <div className={`h-screen ${isCollapsed ? 'w-16' : 'w-56'} bg-gradient-to-b from-primary-800 via-primary-900 to-[#3d1422] text-neutral-50 flex flex-col rounded-r-3xl transition-all duration-300 relative shadow-xl`}>
+  <div
+    className={`${isCollapsed ? 'w-14' : 'w-56'} text-neutral-50 flex flex-col rounded-r-3xl transition-all duration-300 relative shadow-xl ml-4 mb-8`}
+    style={{ background: `linear-gradient(to bottom, #5a1e33, #451726, #240d14)`, maxHeight: '96vh', paddingTop: '40px' }}
+  >
       {/* Toggle Button */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={() => setIsCollapsed((v) => !v)}
         className="absolute -right-3 top-8 w-6 h-6 bg-primary-600 rounded-full flex items-center justify-center hover:bg-primary-500 transition-colors shadow-lg z-10"
+        aria-label={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
       >
         {isCollapsed ? (
           <ChevronRight className="w-4 h-4 text-neutral-50" />
@@ -51,20 +55,17 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       </button>
 
       {/* Logo/Header - Dark Background */}
-      <div className={`bg-gradient-to-b from-[#0d0609] to-[#1a0d15] ${isCollapsed ? 'px-2 py-4' : 'px-4 py-4'} transition-all duration-300`}>
-        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2'}`}>
-          <img 
-            src="/legacy-backend/public/assets/sem fundo.png" 
-            alt="Logo" 
-            className="w-9 h-9 object-contain flex-shrink-0"
-          />
-          {!isCollapsed && (
-            <div>
-              <h3 className="text-neutral-50 text-sm font-semibold">Dr. David Breno</h3>
-              <p className="text-primary-200 text-[10px]">Odontologia</p>
-            </div>
-          )}
-        </div>
+      <div className={`bg-gradient-to-b from-[#1a0d15] to-[#2d1420] ${isCollapsed ? 'px-2 py-6' : 'px-4 py-8 pb-6'} transition-all duration-300 flex flex-col items-center justify-center`}>
+        <img 
+          src="/legacy-backend/public/assets/LOGO BRANCA.png" 
+          alt="Logo" 
+          className={`${isCollapsed ? 'w-10 h-10' : 'w-16 h-16'} object-contain flex-shrink-0 transition-all duration-300 mt-4 mb-4`}
+        />
+        {!isCollapsed && (
+          <div className="text-center">
+            <h3 className="text-neutral-50 text-sm font-semibold">Dr. David</h3>
+          </div>
+        )}
       </div>
 
       <Separator className="bg-primary-700" />
